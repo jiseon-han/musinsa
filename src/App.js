@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Characters from './pages/Characters';
 
 function App() {
@@ -7,7 +7,8 @@ function App() {
     <div className="App">
       <header>MUSINSA</header>
       <Routes>
-        <Route path="/" element={<Characters />} />
+        <Route path="/characters" element={<Characters />} />
+        <Route path="/" element={<Navigate to="/characters" />} />
       </Routes>
     </div>
   );

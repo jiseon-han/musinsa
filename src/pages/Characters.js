@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { InfiniteScroll, List, Selector, Button, Loading } from 'antd-mobile';
 import { UndoOutline } from 'antd-mobile-icons';
 import { getDemo } from '../demoApi';
@@ -12,7 +13,8 @@ const filters = [
 ];
 
 const Characters = () => {
-  const [currPage, setCurrPage] = useState(1); //TODO: params에서 페이지 받아오기
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [currPage, setCurrPage] = useState(parseInt(searchParams.get('page')) ?? 1);
   const [characters, setCharacters] = useState([]);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState([]);
