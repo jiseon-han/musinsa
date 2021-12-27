@@ -3,7 +3,7 @@ import { InfiniteScroll, List, Selector, Button, Loading } from 'antd-mobile';
 import { UndoOutline } from 'antd-mobile-icons';
 import { getDemo } from '../demoApi';
 import CharacterItem from '../components/CharacterItem';
-import { StyledCharacters, StyledFilters } from '../styles/StyledComp';
+import { StyledCharacters, StyledEmpty, StyledFilters } from '../styles/StyledComp';
 
 const filters = [
   { label: '생존인물만', value: 'isAlive' },
@@ -16,7 +16,8 @@ const Characters = () => {
   const [characters, setCharacters] = useState([]);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState([]);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   async function getCharacters(page) {
     try {
@@ -25,10 +26,12 @@ const Characters = () => {
 
       const json = await getDemo(page);
 
+      setIsLoading(true);
       // delay 처리
       setTimeout(() => {
         setCharacters([...characters, ...json]);
         setHasMore(true);
+        setIsLoading(false);
       }, 2000);
     } catch (e) {
       //TODO: error 처리
@@ -36,6 +39,10 @@ const Characters = () => {
     }
   }
 
+  useEffect(() => {
+    //초기 페이지에 대한 캐릭터 리스트 요청
+    getCharacters(currPage);
+  }, []);
   useEffect(() => {
     console.log('page changed : ', currPage);
     // getCharacters(currPage);
@@ -57,7 +64,6 @@ const Characters = () => {
 
   const onDelete = (item) => {
     const filteredList = filteredCharacters.filter((data) => data.url !== item.url);
-    console.log(filteredList);
     setFilteredCharacters(filteredList);
   };
 
@@ -70,30 +76,29 @@ const Characters = () => {
 
   return (
     <StyledCharacters>
-      <div className="filter">{/* filter */}</div>
-      <div className="characters">
-        {/* characters List */}
-        <StyledFilters>
-          <Selector options={filters} multiple={true} value={selectedFilters} onChange={(arr) => setSelectedFilters(arr)} />
-          <Button
-            onClick={() => {
-              setSelectedFilters([]);
-              setFilteredCharacters(characters);
-            }}>
-            <UndoOutline /> 초기화
-          </Button>
-        </StyledFilters>
-
-        <List>
-          {filteredCharacters.map((data, idx) => (
-            <CharacterItem key={idx} data={data} onDelete={() => onDelete(data)} />
-          ))}
-        </List>
+      <StyledFilters>
+        <Selector options={filters} multiple={true} value={selectedFilters} onChange={(arr) => setSelectedFilters(arr)} />
+        <Button
+          onClick={() => {
+            setSelectedFilters([]);
+            setFilteredCharacters(characters);
+          }}>
+          <UndoOutline /> 초기화
+        </Button>
+      </StyledFilters>
+      <List>
+        {filteredCharacters.map((data, idx) => (
+          <CharacterItem key={idx} data={data} onDelete={() => onDelete(data)} />
+        ))}
+      </List>
+      {filteredCharacters.length === 0 && !isLoading ? (
+        <StyledEmpty description="결과가 없습니다." />
+      ) : (
         <InfiniteScroll loadMore={loadMore} hasMore={hasMore}>
           <span>Loading</span>
           <Loading />
         </InfiniteScroll>
-      </div>
+      )}
     </StyledCharacters>
   );
 };

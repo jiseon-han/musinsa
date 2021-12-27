@@ -1,5 +1,5 @@
-import styled, { css } from 'styled-components';
-import { List } from 'antd-mobile';
+import styled from 'styled-components';
+import { List, Empty } from 'antd-mobile';
 
 const COLORS = {
   black: '#000',
@@ -10,6 +10,7 @@ export const StyledCharacters = styled.div`
   background: #eee;
   padding: 10px;
   height: 100%;
+  min-height: calc(100vh - 58px); /* 58px = header : 38px , padding: 20px */
 `;
 
 export const StyledFilters = styled.div`
@@ -68,4 +69,9 @@ export const StyledItemBox = styled.div`
     position: absolute;
     top: -5px;
   }
+`;
+
+export const StyledEmpty = styled(Empty)`
+  background: #fff;
+  min-height: calc(100vh - 160px);
 `;
