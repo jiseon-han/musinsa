@@ -1,70 +1,46 @@
-# Getting Started with Create React App
+# Musinsa
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+무신사 사전 과제인 characters list 무한 스크롤 UI 구현입니다.
 
-## Available Scripts
+# 프로젝트 실행 방법
 
-In the project directory, you can run:
+npm으로 실행 시
 
-### `npm start`
+```
+npm install
+npm start
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+yarn으로 실행 시
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```
+yarn install
+yarn start
+```
 
-### `npm test`
+`http://localhost:3000/characters`에서 구현 결과를 확인할 수 있습니다.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# 사용하는 Library 및 Framework
 
-### `npm run build`
+## React.js
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- 실무에서 주로 사용하였고, create-react-app으로 간편하게 프로젝트를 구성하였습니다.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## react-router
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- react 프로젝트에서 페이지의 이동 관리를 위한 라우팅 라이브러리 입니다.
+- 과제의 URL에서 page를 받아올 때 사용합니다.
 
-### `npm run eject`
+## Styled-Components
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- javascript에서 css를 사용할 수 있도록 도와주는 스타일링 프레임워크 입니다.
+- 컴포넌트 형식으로 스타일을 줄 수 있어 스타일의 재사용성 및 사이드 이펙트 해결을 위해 사용 했습니다.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## antd-mobile
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- 인기있는 UI Framework인 ant design의 모바일 버전으로 간편하게 공통된 UI 스타일 제공하며 infinity Scroll 기능을 제공합니다.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# 결과 화면
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![필터 및 삭제, 초기화](./readmeImage/filterAndDelete.mov)
+![무한 스크롤](./readmeImage/infinityScroll.mov)
