@@ -21,7 +21,7 @@ const CharacterItem = (props) => {
         </StyledItemBox>
         <div className="one-line">
           <StyledItemBox title="books">{books?.length}</StyledItemBox>
-          <StyledItemBox title="tvSeries">{tvSeries?.length}</StyledItemBox>
+          <StyledItemBox title="tvSeries">{tvSeries.join('').trim().length > 0 ? tvSeries.length : 0}</StyledItemBox>
         </div>
       </div>
       <DeleteOutline color="var(--adm-color-danger)" onClick={props.onDelete} />

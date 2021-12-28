@@ -1,11 +1,6 @@
 import styled from 'styled-components';
 import { List, Empty, Button } from 'antd-mobile';
 
-const COLORS = {
-  black: '#000',
-  blue: '#0379FF',
-};
-
 export const StyledCharacters = styled.div`
   background: #eee;
   padding: 10px;

@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { InfiniteScroll, List, Selector, Loading } from 'antd-mobile';
+import { InfiniteScroll, List, Selector, Loading, Toast, Modal } from 'antd-mobile';
 import { UndoOutline } from 'antd-mobile-icons';
-import { getDemo } from '../demoApi';
 import CharacterItem from '../components/CharacterItem';
 import { StyledCharacters, StyledEmpty, StyledFilters, StyledButton } from '../styles/StyledComp';
-import { sleep } from 'antd-mobile/es/utils/sleep'; //TODO: test
 
 const filters = [
   { label: '생존인물만', value: 'isAlive' },
@@ -26,19 +24,16 @@ const Characters = () => {
   const getCharacters = useCallback(async (page) => {
     try {
       setIsLoading(true);
-      // const res = await fetch(`https://www.anapioficeandfire.com/api/characters?page=${page}&pageSize=10`);
-      // const json = await res.json();
-
-      const json = await getDemo(page);
-      await sleep(2000);
+      const res = await fetch(`https://www.anapioficeandfire.com/api/characters?page=${page}&pageSize=10`);
+      const json = await res.json();
 
       setCharacters((c) => [...c, ...json]);
       setIsLoading(false);
 
       return json;
     } catch (e) {
-      //TODO: error 처리
       console.log(e);
+      Toast.show({ content: '데이터를 받아오는데 문제가 발생했습니다.', position: 'top' });
     }
   }, []);
 
@@ -46,10 +41,6 @@ const Characters = () => {
     //초기 페이지에 대한 캐릭터 리스트 요청
     getCharacters(currPage);
   }, []);
-  useEffect(() => {
-    console.log('page changed : ', currPage);
-    // getCharacters(currPage);
-  }, [currPage]);
 
   useEffect(() => {
     //characters는 데이터 추가될 때만 변경되므로
@@ -59,7 +50,7 @@ const Characters = () => {
       let returnV = true;
       if (filter.isAlive) returnV = character.died === '';
       if (filter.isFemale) returnV = character.gender === 'Female';
-      if (filter.hasNoTvSeries) returnV = character.tvSeries.length === 0;
+      if (filter.hasNoTvSeries) returnV = character.tvSeries.join('').trim().length === 0;
       return returnV;
     });
     setFilteredCharacters(filtered);
@@ -67,8 +58,15 @@ const Characters = () => {
 
   const onDelete = useCallback(
     (item) => {
-      const filteredList = filteredCharacters.filter((data) => data.url !== item.url);
-      setFilteredCharacters(filteredList);
+      Modal.confirm({
+        content: '정말 삭제하시겠습니까?',
+        confirmText: '삭제',
+        cancelText: '취소',
+        onConfirm: () => {
+          const filteredList = filteredCharacters.filter((data) => data.url !== item.url);
+          setFilteredCharacters(filteredList);
+        },
+      });
     },
     [filteredCharacters],
   );
@@ -102,7 +100,7 @@ const Characters = () => {
       {filteredCharacters.length === 0 && !isLoading ? (
         <StyledEmpty description="결과가 없습니다." />
       ) : (
-        <InfiniteScroll loadMore={loadMore} hasMore={hasMore}>
+        <InfiniteScroll loadMore={loadMore} hasMore={hasMore} threshold={50}>
           {hasMore ? (
             <>
               <span>Loading</span>
