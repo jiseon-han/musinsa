@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { InfiniteScroll, List, Selector, Button, Loading } from 'antd-mobile';
+import { InfiniteScroll, List, Selector, Loading } from 'antd-mobile';
 import { UndoOutline } from 'antd-mobile-icons';
 import { getDemo } from '../demoApi';
 import CharacterItem from '../components/CharacterItem';
-import { StyledCharacters, StyledEmpty, StyledFilters } from '../styles/StyledComp';
+import { StyledCharacters, StyledEmpty, StyledFilters, StyledButton } from '../styles/StyledComp';
+import { sleep } from 'antd-mobile/es/utils/sleep'; //TODO: test
 
 const filters = [
   { label: '생존인물만', value: 'isAlive' },
@@ -14,32 +15,32 @@ const filters = [
 
 const Characters = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [currPage, setCurrPage] = useState(parseInt(searchParams.get('page')) ?? 1);
+  const startPage = parseInt(searchParams.get('page'));
+  const [currPage, setCurrPage] = useState(isNaN(startPage) ? 1 : startPage);
   const [characters, setCharacters] = useState([]);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState([]);
-  const [hasMore, setHasMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
-  async function getCharacters(page) {
+  const getCharacters = useCallback(async (page) => {
     try {
+      setIsLoading(true);
       // const res = await fetch(`https://www.anapioficeandfire.com/api/characters?page=${page}&pageSize=10`);
       // const json = await res.json();
 
       const json = await getDemo(page);
+      await sleep(2000);
 
-      setIsLoading(true);
-      // delay 처리
-      setTimeout(() => {
-        setCharacters([...characters, ...json]);
-        setHasMore(true);
-        setIsLoading(false);
-      }, 2000);
+      setCharacters((c) => [...c, ...json]);
+      setIsLoading(false);
+
+      return json;
     } catch (e) {
       //TODO: error 처리
       console.log(e);
     }
-  }
+  }, []);
 
   useEffect(() => {
     //초기 페이지에 대한 캐릭터 리스트 요청
@@ -64,29 +65,34 @@ const Characters = () => {
     setFilteredCharacters(filtered);
   }, [characters, selectedFilters]);
 
-  const onDelete = (item) => {
-    const filteredList = filteredCharacters.filter((data) => data.url !== item.url);
-    setFilteredCharacters(filteredList);
-  };
+  const onDelete = useCallback(
+    (item) => {
+      const filteredList = filteredCharacters.filter((data) => data.url !== item.url);
+      setFilteredCharacters(filteredList);
+    },
+    [filteredCharacters],
+  );
 
-  const loadMore = async () => {
-    console.log('loadMore');
-    setHasMore(false);
-    await getCharacters(currPage);
-    setCurrPage(currPage + 1);
-  };
+  const loadMore = useCallback(async () => {
+    if (isLoading) return;
+    const newCharacters = await getCharacters(currPage);
+    setHasMore(newCharacters.length > 0);
+    if (newCharacters.length > 0) {
+      setCurrPage(currPage + 1);
+    }
+  }, [isLoading, currPage, getCharacters]);
 
   return (
     <StyledCharacters>
       <StyledFilters>
         <Selector options={filters} multiple={true} value={selectedFilters} onChange={(arr) => setSelectedFilters(arr)} />
-        <Button
+        <StyledButton
           onClick={() => {
             setSelectedFilters([]);
             setFilteredCharacters(characters);
           }}>
           <UndoOutline /> 초기화
-        </Button>
+        </StyledButton>
       </StyledFilters>
       <List>
         {filteredCharacters.map((data, idx) => (
@@ -97,8 +103,14 @@ const Characters = () => {
         <StyledEmpty description="결과가 없습니다." />
       ) : (
         <InfiniteScroll loadMore={loadMore} hasMore={hasMore}>
-          <span>Loading</span>
-          <Loading />
+          {hasMore ? (
+            <>
+              <span>Loading</span>
+              <Loading />
+            </>
+          ) : (
+            <span>모든 캐릭터를 불러왔습니다.</span>
+          )}
         </InfiniteScroll>
       )}
     </StyledCharacters>

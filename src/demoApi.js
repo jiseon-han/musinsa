@@ -398,5 +398,6 @@ const page2 = [
 ];
 
 export async function getDemo(page) {
+  if (page === 5) return []; //최대 5페이지까지만
   return page % 2 === 1 ? page1 : page2;
 }

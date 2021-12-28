@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { List, Empty } from 'antd-mobile';
+import { List, Empty, Button } from 'antd-mobile';
 
 const COLORS = {
   black: '#000',
@@ -17,6 +17,20 @@ export const StyledFilters = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
+
+  & .adm-selector {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding-right: 15px;
+    & .adm-space-wrap {
+      flex-wrap: inherit;
+      overflow: auto;
+    }
+  }
 
   & .adm-selector-item {
     border: 1px solid #eee;
@@ -74,4 +88,8 @@ export const StyledItemBox = styled.div`
 export const StyledEmpty = styled(Empty)`
   background: #fff;
   min-height: calc(100vh - 160px);
+`;
+
+export const StyledButton = styled(Button)`
+  white-space: nowrap;
 `;
