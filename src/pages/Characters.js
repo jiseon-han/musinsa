@@ -24,13 +24,8 @@ const Characters = () => {
 
   const getCharacters = useCallback(async (page) => {
     try {
-      setIsLoading(true);
       const res = await fetch(`https://www.anapioficeandfire.com/api/characters?page=${page}&pageSize=10`);
       const json = await res.json();
-
-      setCharacters((c) => [...c, ...json]);
-      setIsLoading(false);
-
       return json;
     } catch (e) {
       console.log(e);
@@ -40,7 +35,13 @@ const Characters = () => {
 
   useEffect(() => {
     //초기 페이지에 대한 캐릭터 리스트 요청
-    getCharacters(currPage);
+    async function loadCharacters() {
+      const characters = await getCharacters(currPage);
+      setCharacters((c) => [...c, ...characters]);
+    }
+    setIsLoading(true);
+    loadCharacters();
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -76,11 +77,16 @@ const Characters = () => {
 
   const loadMore = useCallback(async () => {
     if (isLoading) return;
-    const newCharacters = await getCharacters(currPage);
+    const nextPage = currPage + 1;
+
+    setIsLoading(true);
+    const newCharacters = await getCharacters(nextPage);
     setHasMore(newCharacters.length > 0);
     if (newCharacters.length > 0) {
-      setCurrPage(currPage + 1);
+      setCurrPage(nextPage);
+      setCharacters((c) => [...c, ...newCharacters]);
     }
+    setIsLoading(false);
   }, [isLoading, currPage, getCharacters]);
 
   return (
