@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyledListItem, StyledItemBox } from '../styles/StyledComp';
-import { Ellipsis } from 'antd-mobile';
 import { DeleteOutline } from 'antd-mobile-icons';
 
 const CharacterItem = (props) => {
@@ -10,14 +9,14 @@ const CharacterItem = (props) => {
       <div className="data-wrapper">
         <div className="one-line">
           <StyledItemBox title="name">
-            <Ellipsis direction="end" content={name} />
+            <p>{name}</p>
           </StyledItemBox>
           <StyledItemBox title="aliases">
-            <Ellipsis direction="end" content={aliases?.join(', ')} />
+            <p>{aliases?.join(', ')}</p>
           </StyledItemBox>
         </div>
         <StyledItemBox title="title">
-          <Ellipsis direction="end" content={titles?.join(', ')} />
+          <p>{titles?.join(', ')} </p>
         </StyledItemBox>
         <div className="one-line">
           <StyledItemBox title="books">{books?.length}</StyledItemBox>

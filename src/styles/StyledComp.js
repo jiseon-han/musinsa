@@ -52,11 +52,15 @@ export const StyledListItem = styled(List.Item)`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: calc(100vw - 40px);
   }
   & .data-wrapper {
     width: 90%;
     & .one-line {
       display: flex;
+      > div {
+        width: 50%;
+      }
     }
   }
   & svg {
@@ -71,6 +75,13 @@ export const StyledItemBox = styled.div`
   margin-top: 15px;
   height: 25px;
   width: 100%;
+  & p {
+    margin: 0px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 80vw;
+  }
   &::before {
     content: '${(p) => p.title}';
     font-size: 12px;
