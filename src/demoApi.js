@@ -395,6 +395,29 @@ const page2 = [
     tvSeries: ['Season 1'],
     playedBy: ['Susan Brown'],
   },
+  {
+    //사망, 여성, 시리즈 없음
+    url: 'https://www.anapioficeandfire.com/api/characters/21',
+    name: 'Mordane',
+    gender: 'Female',
+    culture: '',
+    born: '',
+    died: "In 298 AC, at King's Landing",
+    titles: ['Septa'],
+    aliases: [''],
+    father: '',
+    mother: '',
+    spouse: '',
+    allegiances: ['https://www.anapioficeandfire.com/api/houses/362'],
+    books: [
+      'https://www.anapioficeandfire.com/api/books/1',
+      'https://www.anapioficeandfire.com/api/books/2',
+      'https://www.anapioficeandfire.com/api/books/3',
+    ],
+    povBooks: [],
+    tvSeries: [''],
+    playedBy: ['Susan Brown'],
+  },
 ];
 
 export async function getDemo(page) {

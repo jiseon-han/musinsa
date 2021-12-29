@@ -5,10 +5,10 @@ import { UndoOutline } from 'antd-mobile-icons';
 import CharacterItem from '../components/CharacterItem';
 import { StyledCharacters, StyledEmpty, StyledFilters, StyledButton } from '../styles/StyledComp';
 
-const filters = [
-  { label: '생존인물만', value: 'isAlive' },
-  { label: '여자만', value: 'isFemale' },
-  { label: 'tvSeries 없음', value: 'hasNoTvSeries' },
+const filterTypes = [
+  { label: '생존인물만', value: 'isAlive', trueCheck: (c) => c.died === '' },
+  { label: '여자만', value: 'isFemale', trueCheck: (c) => c.gender === 'Female' },
+  { label: 'tvSeries 없음', value: 'hasNoTvSeries', trueCheck: (c) => c.tvSeries.join('').trim().length === 0 },
 ];
 
 const Characters = () => {
@@ -16,6 +16,7 @@ const Characters = () => {
   const startPage = parseInt(searchParams.get('page'));
   const [currPage, setCurrPage] = useState(isNaN(startPage) ? 1 : startPage);
   const [characters, setCharacters] = useState([]);
+  const [deletedCharacters, setDeletedCharacters] = useState([]); //삭제 요청된 캐릭터들. 캐릭터의 url값을 가집니다.
   const [filteredCharacters, setFilteredCharacters] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [hasMore, setHasMore] = useState(true);
@@ -43,15 +44,14 @@ const Characters = () => {
   }, []);
 
   useEffect(() => {
-    //characters는 데이터 추가될 때만 변경되므로
-    //filteredCharacters에 추가된 데이터 및 list filter해서 추가
-    const filter = selectedFilters.reduce((acc, curr) => ({ ...acc, [curr]: true }), {});
+    // 선택한 필터 종류가 변경되었거나, 데이터 추가 요청 시 실행
+    // 캐릭터를 추가로 불러온 경우에도 현재 선택된 필터 및 삭제된 캐릭터가 유지되도록
+    const filter = filterTypes.filter((obj) => selectedFilters.includes(obj.value));
     const filtered = characters.filter((character) => {
-      let returnV = true;
-      if (filter.isAlive) returnV = character.died === '';
-      if (filter.isFemale) returnV = character.gender === 'Female';
-      if (filter.hasNoTvSeries) returnV = character.tvSeries.join('').trim().length === 0;
-      return returnV;
+      // 삭제된 캐릭터일 경우 필터 리스트에서 제외
+      if (deletedCharacters.includes(character.url)) return false;
+      // 선택된 필터의 모든 조건을 만족하는 캐릭터만 보여준다.
+      return filter.map((obj) => obj.trueCheck(character)).every((v) => v);
     });
     setFilteredCharacters(filtered);
   }, [characters, selectedFilters]);
@@ -63,6 +63,9 @@ const Characters = () => {
         confirmText: '삭제',
         cancelText: '취소',
         onConfirm: () => {
+          // 1. deletedCharacters에 삭제되는 캐릭터 url(primary Key)추가
+          // 2. 화면의 보여지고 있는 캐릭터 리스트에서 선택된 캘릭더 필터 후 업데이트
+          setDeletedCharacters((dc) => [...dc, item.url]);
           const filteredList = filteredCharacters.filter((data) => data.url !== item.url);
           setFilteredCharacters(filteredList);
         },
@@ -83,10 +86,11 @@ const Characters = () => {
   return (
     <StyledCharacters>
       <StyledFilters>
-        <Selector options={filters} multiple={true} value={selectedFilters} onChange={(arr) => setSelectedFilters(arr)} />
+        <Selector options={filterTypes} multiple={true} value={selectedFilters} onChange={(arr) => setSelectedFilters(arr)} />
         <StyledButton
           onClick={() => {
             setSelectedFilters([]);
+            setDeletedCharacters([]);
             setFilteredCharacters(characters);
           }}>
           <UndoOutline /> 초기화
